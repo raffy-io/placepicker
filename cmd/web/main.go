@@ -6,11 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"placepicker"
-	"placepicker/internal/config"
-	"placepicker/internal/connection"
-	"placepicker/internal/db"
-	"placepicker/internal/handlers"
+
+	"github.com/raffy-io/placepicker"
+	"github.com/raffy-io/placepicker/internal/config"
+	"github.com/raffy-io/placepicker/internal/connection"
+	"github.com/raffy-io/placepicker/internal/db"
+	"github.com/raffy-io/placepicker/internal/handlers"
 )
 
 func main() {
@@ -37,7 +38,9 @@ func main() {
 	// routes
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", locationHandler.GetAvailableLocations)
+	mux.HandleFunc("GET /", locationHandler.Homepage)
+	mux.HandleFunc("POST /add", locationHandler.Add)
+	mux.HandleFunc("POST /remove", locationHandler.Remove)
 
 	// static assets
 	staticFS, err := fs.Sub(placepicker.EmbeddedAssets, "static")

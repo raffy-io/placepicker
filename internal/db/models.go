@@ -4,10 +4,6 @@
 
 package db
 
-import (
-	"database/sql"
-)
-
 type Location struct {
 	ID              int64
 	Title           string
@@ -15,5 +11,5 @@ type Location struct {
 	ImageAlt        string
 	Lat             float64
 	Lon             float64
-	IsDreamLocation sql.NullInt64
+	IsDreamLocation int64
 }

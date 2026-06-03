@@ -1,4 +1,4 @@
-module placepicker
+module github.com/raffy-io/placepicker
 
 go 1.26.3
 

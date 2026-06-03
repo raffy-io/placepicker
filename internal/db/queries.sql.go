@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const listAvailableLocations = `-- name: ListAvailableLocations :many
@@ -91,7 +90,7 @@ WHERE id = ?
 `
 
 type SetDreamLocationStatusParams struct {
-	IsDreamLocation sql.NullInt64
+	IsDreamLocation int64
 	ID              int64
 }
 

@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS locations (
     image_alt TEXT NOT NULL,
     lat REAL NOT NULL,
     lon REAL NOT NULL,
-    is_dream_location INTEGER DEFAULT 0
+    is_dream_location TINYINT NOT NULL DEFAULT 0
 );
+
