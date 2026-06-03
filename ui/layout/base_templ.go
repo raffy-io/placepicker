@@ -31,20 +31,20 @@ func Base(title string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"scroll-smooth\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"/static/css/output.css\"><script defer src=\"/static/js/alpine-intersect.min.js\"></script><script defer src=\"/static/js/alpine.min.js\"></script><script defer src=\"/static/js/htmx.min.js\"></script><title>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"scroll-smooth\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/layout/base.templ`, Line: 15, Col: 17}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/layout/base.templ`, Line: 11, Col: 17}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title></head><body class=\"bg-app-dom text-app-sec p-5 lg:p-24\"><header class=\"grid place-items-center\"><img class=\"h-16 w-16 mb-4 animate-spin [animation-duration:10s]\" src=\"/static/images/logo.png\" alt=\"placepicker logo\"><h1 class=\"uppercase text-2xl lg:text-6xl font-semibold tracking-wider\">placepicker</h1><p class=\"lg:w-1/3 mx-auto text-center text-sm\">Create your personal collection of places you would like to visit or you have visited</p></header><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</title><link rel=\"icon\" type=\"image/x-icon\" href=\"/static/images/logo.png\"><link rel=\"stylesheet\" href=\"/static/css/output.css\"><script defer src=\"/static/js/alpine-intersect.min.js\"></script><script defer src=\"/static/js/alpine.min.js\"></script><script defer src=\"/static/js/htmx.min.js\"></script></head><body class=\"bg-app-dom text-app-sec p-5 lg:p-24\"><header class=\"grid place-items-center\"><img class=\"h-16 w-16 mb-4 animate-spin [animation-duration:10s]\" src=\"/static/images/logo.png\" alt=\"placepicker logo\"><h1 class=\"uppercase text-2xl lg:text-6xl font-semibold tracking-wider\">placepicker</h1><p class=\"lg:w-1/3 mx-auto text-center text-sm\">Create your personal collection of places you would like to visit or you have visited</p></header><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
