@@ -25,7 +25,17 @@ templ DreamLocations(dreamLocs []db.Location) {
 					hx-swap="outerHTML"
 					hx-vals={ templ.JSONString(map[string]int64{"id": loc.ID}) }
 					hx-post="/remove"
-					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer"
+					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
+					x-on:htmx:confirm={ fmt.Sprintf(`
+                        if (!$event.detail.confirmed) {
+                            $event.preventDefault();
+                            $dispatch('open-confirm', { 
+                                title: 'Remove Location', 
+                                message: 'Are you sure you want to remove %s?', 
+                                targetEvent: $event 
+                            });
+                        }
+                    `, loc.Title) }
 				>
 					<img src={ fmt.Sprintf("/static/images/%s", loc.ImageSrc) } alt={ loc.ImageAlt }/>
 					<figcaption class="absolute right-1 bottom-5 text-sm bg-app-sec text-app-dom p-0.5 rounded shadow-2xs">
@@ -44,10 +54,10 @@ templ AvailableLocations(availableLocs []db.Location) {
 			for _, loc := range availableLocs {
 				<figure
 					hx-target="#avail-locs"
-					hx-swap="outerHTML"
+					hx-swap="outerHTML show:#section-dreams:top"
 					hx-vals={ templ.JSONString(map[string]int64{"id": loc.ID}) }
 					hx-post="/add"
-					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer"
+					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
 				>
 					<img src={ fmt.Sprintf("/static/images/%s", loc.ImageSrc) } alt={ loc.ImageAlt }/>
 					<figcaption class="absolute right-1 bottom-5 text-sm bg-app-sec text-app-dom p-0.5 rounded shadow-2xs">
