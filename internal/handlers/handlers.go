@@ -21,6 +21,13 @@ func NewHandler(queries *db.Queries) *Handler {
 func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
+	pollLocations,err := h.Queries.PollSuggestions(ctx)
+	if err != nil {
+		log.Printf("Data not found: %v\n", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
 	availableLocations,err := h.Queries.ListAvailableLocations(ctx)
 	if err != nil {
 		log.Printf("Data not found: %v\n", err)
@@ -35,7 +42,7 @@ func (h *Handler) Homepage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	component := ui.Homepage(availableLocations,dreamLocations)
+	component := ui.Homepage(pollLocations,availableLocations,dreamLocations)
 	templ.Handler(component).ServeHTTP(w,r)
 }
 
@@ -142,4 +149,33 @@ func (h *Handler) Remove(w http.ResponseWriter, r *http.Request){
 	component := ui.RemoveLocationResponse(availableLocations,dreamLocations)
 	templ.Handler(component).ServeHTTP(w,r)
 	
+}
+
+func (h *Handler) PollLocations(w http.ResponseWriter, r *http.Request){
+	ctx := r.Context()
+
+	pollLocations,err := h.Queries.PollSuggestions(ctx)
+	if err != nil {
+		log.Printf("Data not found: %v\n", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	availableLocations,err := h.Queries.ListAvailableLocations(ctx)
+	if err != nil {
+		log.Printf("Data not found: %v\n", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	dreamLocations,err := h.Queries.ListDreamLocations(ctx)
+	if err != nil {
+		log.Printf("Data not found: %v\n", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	component := ui.PollSuggestionResponse(pollLocations,availableLocations,dreamLocations)
+	templ.Handler(component).ServeHTTP(w,r)
+
 }

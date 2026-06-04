@@ -12,3 +12,9 @@ ORDER BY title;
 UPDATE locations
 SET is_dream_location = ?
 WHERE id = ?;
+
+-- name: PollSuggestions :many
+SELECT * FROM locations
+WHERE is_dream_location = 0
+ORDER BY RANDOM()
+LIMIT 3;

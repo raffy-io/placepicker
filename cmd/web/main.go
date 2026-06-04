@@ -41,6 +41,7 @@ func main() {
 	mux.HandleFunc("GET /", locationHandler.Homepage)
 	mux.HandleFunc("POST /add", locationHandler.Add)
 	mux.HandleFunc("POST /remove", locationHandler.Remove)
+	mux.HandleFunc("GET /poll", locationHandler.PollLocations)
 
 	// static assets
 	staticFS, err := fs.Sub(placepicker.EmbeddedAssets, "static")

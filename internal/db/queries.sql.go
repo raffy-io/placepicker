@@ -83,6 +83,44 @@ func (q *Queries) ListDreamLocations(ctx context.Context) ([]Location, error) {
 	return items, nil
 }
 
+const pollSuggestions = `-- name: PollSuggestions :many
+SELECT id, title, image_src, image_alt, lat, lon, is_dream_location FROM locations
+WHERE is_dream_location = 0
+ORDER BY RANDOM()
+LIMIT 3
+`
+
+func (q *Queries) PollSuggestions(ctx context.Context) ([]Location, error) {
+	rows, err := q.db.QueryContext(ctx, pollSuggestions)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Location
+	for rows.Next() {
+		var i Location
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.ImageSrc,
+			&i.ImageAlt,
+			&i.Lat,
+			&i.Lon,
+			&i.IsDreamLocation,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const setDreamLocationStatus = `-- name: SetDreamLocationStatus :exec
 UPDATE locations
 SET is_dream_location = ?

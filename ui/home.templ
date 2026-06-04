@@ -4,8 +4,11 @@ import "github.com/raffy-io/placepicker/ui/layout"
 import "github.com/raffy-io/placepicker/internal/db"
 import "fmt"
 
-templ Homepage(availableLocs []db.Location, dreamLocs []db.Location) {
+templ Homepage(pollLocs []db.Location, availableLocs []db.Location, dreamLocs []db.Location) {
 	@layout.Base("Welcome") {
+		<section id="section-polls">
+			@PollSuggestion(pollLocs)
+		</section>
 		<section id="section-dreams">
 			@DreamLocations(dreamLocs)
 		</section>
@@ -23,7 +26,7 @@ templ DreamLocations(dreamLocs []db.Location) {
 				<figure
 					hx-target="#dream-locs"
 					hx-swap="outerHTML"
-					hx-vals={ templ.JSONString(map[string]int64{"id": loc.ID}) }
+					hx-vals={ fmt.Sprintf(`{"id": %d}`, loc.ID) }
 					hx-post="/remove"
 					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
 					x-on:htmx:confirm={ fmt.Sprintf(`
@@ -55,7 +58,7 @@ templ AvailableLocations(availableLocs []db.Location) {
 				<figure
 					hx-target="#avail-locs"
 					hx-swap="outerHTML show:#section-dreams:top"
-					hx-vals={ templ.JSONString(map[string]int64{"id": loc.ID}) }
+					hx-vals={ fmt.Sprintf(`{"id": %d}`, loc.ID) }
 					hx-post="/add"
 					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
 				>
@@ -69,18 +72,69 @@ templ AvailableLocations(availableLocs []db.Location) {
 	</div>
 }
 
-// Sent back when adding: Updates Available directly, piggybacks Dream updates
+// Sent back when adding
 templ AddLocationResponse(updatedAvail []db.Location, updatedDreams []db.Location) {
 	@AvailableLocations(updatedAvail)
-	<section id="section-dreams" hx-swap-oob="outerHTML">
+	// Matches hx-target="#avail-locs" via outerHTML
+	// This targets the section and completely overwrites its inner content
+	<section id="section-dreams" hx-swap-oob="true">
 		@DreamLocations(updatedDreams)
 	</section>
 }
 
-// Sent back when removing: Updates Dreams directly, piggybacks Available updates
+// Sent back when removing
 templ RemoveLocationResponse(updatedAvail []db.Location, updatedDreams []db.Location) {
 	@DreamLocations(updatedDreams)
-	<section id="section-avails" hx-swap-oob="outerHTML">
+	// Matches hx-target="#dream-locs" via outerHTML
+	// This targets the section and completely overwrites its inner content
+	<section id="section-avails" hx-swap-oob="true">
 		@AvailableLocations(updatedAvail)
+	</section>
+}
+
+// FIXED: Changed target to #poll-inner and swap to innerHTML. Wrapper stays completely alive!
+templ PollSuggestion(pollLocs []db.Location) {
+	<div id="poll-locs" class="border border-app-acc mt-10 p-5 rounded" hx-target="#poll-inner" hx-swap="innerHTML" hx-get="/poll" hx-trigger="every 6s">
+		<h2 class="capitalize text-center">Suggested locations</h2>
+		<div
+			id="poll-inner"
+			class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4  gap-4 lg:p-5"
+		>
+			@PollItems(pollLocs)
+		</div>
+	</div>
+}
+
+// Clean sub-template containing only the looping cards
+templ PollItems(pollLocs []db.Location) {
+	for _, loc := range pollLocs {
+		<figure
+			hx-target="#avail-locs"
+			hx-swap="outerHTML show:#section-dreams:top"
+			hx-vals={ fmt.Sprintf(`{"id": %d}`, loc.ID) }
+			hx-post="/add"
+			class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
+			x-data="{ mounted: false }"
+			x-init="$nextTick(() => mounted = true)"
+			x-show="mounted"
+			x-transition.opacity.duration.1000ms
+		>
+			<img src={ fmt.Sprintf("/static/images/%s", loc.ImageSrc) } alt={ loc.ImageAlt }/>
+			<figcaption class="absolute right-1 bottom-5 text-sm bg-app-sec text-app-dom p-0.5 rounded shadow-2xs">
+				{ loc.Title }
+			</figcaption>
+		</figure>
+	}
+}
+
+// Sent back when polling
+templ PollSuggestionResponse(pollLocs []db.Location, availableLocs []db.Location, dreamLocs []db.Location) {
+	@PollItems(pollLocs)
+	// Sweeps cleanly into #poll-inner
+	<section id="section-dreams" hx-swap-oob="true">
+		@DreamLocations(dreamLocs)
+	</section>
+	<section id="section-avails" hx-swap-oob="true">
+		@AvailableLocations(availableLocs)
 	</section>
 }
