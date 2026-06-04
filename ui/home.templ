@@ -6,13 +6,13 @@ import "fmt"
 
 templ Homepage(pollLocs []db.Location, availableLocs []db.Location, dreamLocs []db.Location) {
 	@layout.Base("Welcome") {
-		<section id="section-polls">
+		<section id="section-polls" class="backface-hidden">
 			@PollSuggestion(pollLocs)
 		</section>
-		<section id="section-dreams">
+		<section id="section-dreams" class="backface-hidden">
 			@DreamLocations(dreamLocs)
 		</section>
-		<section id="section-avails">
+		<section id="section-avails" class="backface-hidden">
 			@AvailableLocations(availableLocs)
 		</section>
 	}
@@ -60,7 +60,7 @@ templ AvailableLocations(availableLocs []db.Location) {
 					hx-swap="outerHTML show:#section-dreams:top"
 					hx-vals={ fmt.Sprintf(`{"id": %d}`, loc.ID) }
 					hx-post="/add"
-					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl"
+					class="relative hover:rotate-6 transition-all duration-300 rounded overflow-hidden cursor-pointer shadow-2xl "
 				>
 					<img src={ fmt.Sprintf("/static/images/%s", loc.ImageSrc) } alt={ loc.ImageAlt }/>
 					<figcaption class="absolute right-1 bottom-5 text-sm bg-app-sec text-app-dom p-0.5 rounded shadow-2xs">
@@ -117,6 +117,7 @@ templ PollItems(pollLocs []db.Location) {
 			x-data="{ mounted: false }"
 			x-init="$nextTick(() => mounted = true)"
 			x-show="mounted"
+			x-cloak
 			x-transition.opacity.duration.1000ms
 		>
 			<img src={ fmt.Sprintf("/static/images/%s", loc.ImageSrc) } alt={ loc.ImageAlt }/>
